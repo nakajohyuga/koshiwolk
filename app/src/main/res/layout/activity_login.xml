@@ -2,23 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="@android:color/background_light">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ログイン"
         android:textSize="24sp"
-        android:layout_gravity="center" />
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="24dp" />
 
     <EditText
         android:id="@+id/login_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="ユーザーID"
-        android:layout_marginTop="16dp" />
+        android:inputType="text"
+        android:layout_marginBottom="16dp" />
 
     <EditText
         android:id="@+id/password"
@@ -26,32 +29,32 @@
         android:layout_height="wrap_content"
         android:hint="パスワード"
         android:inputType="textPassword"
-        android:layout_marginTop="16dp" />
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        android:gravity="space_between">
+        android:gravity="center">
 
         <Button
             android:id="@+id/login_button"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="ログイン"
-            android:backgroundTint="@color/blue"
-            android:textColor="@android:color/white" />
+            android:layout_weight="1"
+            android:background="@color/blue"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/register_button"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="新規登録"
             android:layout_weight="1"
-            android:text="新規ユーザー"
-            android:backgroundTint="@color/green"
+            android:background="@color/green"
             android:textColor="@android:color/white"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp" />
     </LinearLayout>
 </LinearLayout>
