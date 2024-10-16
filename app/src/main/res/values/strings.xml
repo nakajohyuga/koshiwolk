@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">koshiwolk</string>
+    <string name="steps_0">Steps: 0</string>
+    <string name="step_counter_not_available">Step Counter Sensor is not available!</string>
+    <string name="step_count">Steps: %1$d</string>
+    <string name="initial_step_count">Steps: 0</string>
 </resources>
