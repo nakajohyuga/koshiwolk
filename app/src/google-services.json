@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "747714395761",
+    "firebase_url": "https://koshiwalk-default-rtdb.firebaseio.com",
+    "project_id": "koshiwalk",
+    "storage_bucket": "koshiwalk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747714395761:android:645f49e1bab57b50c1a5d0",
+        "android_client_info": {
+          "package_name": "com.example.koshiwolk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLNYeZre8K5EnB-mf3CCaDrMO0ERcNMn4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747714395761:android:16670c71a26b44a5c1a5d0",
+        "android_client_info": {
+          "package_name": "com.te4.koshiwalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLNYeZre8K5EnB-mf3CCaDrMO0ERcNMn4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

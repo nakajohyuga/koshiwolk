@@ -19,9 +19,9 @@
         android:id="@+id/login_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ユーザーID"
-        android:inputType="text"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:hint="メールアドレス"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/password"
@@ -42,7 +42,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ログイン"
-            android:layout_weight="1"
             android:background="@color/blue"
             android:textColor="@android:color/white"
             android:layout_marginEnd="8dp" />
@@ -52,9 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="新規登録"
-            android:layout_weight="1"
             android:background="@color/green"
             android:textColor="@android:color/white"
             android:layout_marginStart="8dp" />
+
+
     </LinearLayout>
 </LinearLayout>

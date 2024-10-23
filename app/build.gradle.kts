@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -7,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.koshiwolk"
+        applicationId ="com.example.koshiwolk"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -40,6 +41,14 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-}
+    // Firebase BOM を追加
+    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
 
+    // Firebase Authentication と Firestore の依存関係を追加
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+    // Firebase Analytics はそのまま
+    implementation("com.google.firebase:firebase-analytics")
+}
 

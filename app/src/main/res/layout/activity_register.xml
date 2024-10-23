@@ -9,9 +9,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="お客様情報の入力"
-        android:textSize="24sp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:text="ユーザー登録"
+        android:textSize="24sp" />
 
     <EditText
         android:id="@+id/login_id"
@@ -29,38 +29,10 @@
         android:layout_marginTop="16dp" />
 
     <EditText
-        android:id="@+id/kanji_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="漢字氏名"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/kana_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="かな氏名"
-        android:layout_marginTop="16dp" />
-
-    <EditText
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="電子メール"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/yubin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="郵便番号"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/jyusho"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="住所"
         android:layout_marginTop="16dp" />
 
     <Button
@@ -71,4 +43,14 @@
         android:backgroundTint="@color/blue"
         android:textColor="@android:color/white"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/back_to_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ログイン画面に戻る"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/green" />
+    <!-- ボタンの色を適宜変更 -->
 </LinearLayout>
+
