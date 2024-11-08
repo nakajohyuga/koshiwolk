@@ -37,12 +37,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
     // Firebase BOM を追加
-    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
     // Firebase Authentication と Firestore の依存関係を追加
     implementation("com.google.firebase:firebase-auth-ktx")
@@ -51,4 +52,3 @@ dependencies {
     // Firebase Analytics はそのまま
     implementation("com.google.firebase:firebase-analytics")
 }
-
