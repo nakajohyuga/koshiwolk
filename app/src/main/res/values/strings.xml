@@ -7,4 +7,6 @@
     <string name="password">パスワード</string>
     <string name="login_button">ログイン</string>
     <string name="register_button">新規登録</string>
+    <string name="service_notification_title">歩数計測中</string>
+    <string name="service_notification_text">歩数をカウントしています</string>
 </resources>
