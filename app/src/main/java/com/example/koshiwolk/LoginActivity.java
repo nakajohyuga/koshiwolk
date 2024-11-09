@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                                                             showLoginBonus(loginStreak, updatedTotalLoginDays, points);
 
                                                             // ホーム画面へ遷移
-                                                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                                            Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                                                             startActivity(intent);
                                                             finish();
                                                         })

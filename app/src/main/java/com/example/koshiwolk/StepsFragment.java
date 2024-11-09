@@ -2,10 +2,14 @@ package com.example.koshiwolk;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -16,33 +20,33 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class StepsFragment extends Fragment {
 
     private BarChart barChart;
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
-    private boolean isDailyMode = true; // 表示モード
+    private boolean isDailyMode = true;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_steps, container, false);
 
-        barChart = findViewById(R.id.barChart);
+        barChart = view.findViewById(R.id.barChart);
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
         setupBarChart();
         loadStepData();
 
-        Button toggleButton = findViewById(R.id.toggleButton);
-        toggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isDailyMode = !isDailyMode;
-                loadStepData();
-            }
+        Button toggleButton = view.findViewById(R.id.toggleButton);
+        toggleButton.setOnClickListener(v -> {
+            isDailyMode = !isDailyMode;
+            loadStepData();
         });
+
+        return view;
     }
 
     private void setupBarChart() {
@@ -69,16 +73,16 @@ public class HomeActivity extends AppCompatActivity {
                             }
 
                             BarDataSet dataSet = new BarDataSet(entries, isDailyMode ? "曜日ごとの歩数" : "一時間ごとの歩数");
-                            dataSet.setColor(ContextCompat.getColor(this, R.color.purple_500));
+                            dataSet.setColor(ContextCompat.getColor(getContext(), R.color.purple_500));
                             BarData barData = new BarData(dataSet);
                             barData.setBarWidth(0.9f);
                             barChart.setData(barData);
                             barChart.invalidate();
                         } else {
-                            Log.d("HomeActivity", "データが存在しません");
+                            Log.d("StepsFragment", "データが存在しません");
                         }
                     }
                 })
-                .addOnFailureListener(e -> Log.e("HomeActivity", "データの取得に失敗しました", e));
-    }}
-
+                .addOnFailureListener(e -> Log.e("StepsFragment", "データの取得に失敗しました", e));
+    }
+}

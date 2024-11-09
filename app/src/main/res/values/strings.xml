@@ -3,4 +3,8 @@
     <string name="sensor_not_available">Step Counter Sensor is not available!</string>
     <string name="steps">Steps: %1$d</string>
     <string name="step_count_text">Steps: 0</string>
+    <string name="login_id">ログインID</string>
+    <string name="password">パスワード</string>
+    <string name="login_button">ログイン</string>
+    <string name="register_button">新規登録</string>
 </resources>
