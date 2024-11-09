@@ -9,7 +9,7 @@
         android:id="@+id/stepCountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="総歩数: 0"
-        android:textSize="24sp"
-        android:textColor="@android:color/black" />
+        android:text="歩数: 0"
+        android:textSize="18sp" />
+
 </LinearLayout>
