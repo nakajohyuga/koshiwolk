@@ -1,5 +1,8 @@
 package com.example.koshiwolk;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     public String loginId;
     public String email;
@@ -8,12 +11,30 @@ public class User {
     public long lastLoginDate = 0;
     public int points = 100; // 初回ポイント
 
+    // 一時間ごとの歩数データ（24時間分）
+    private List<Integer> hourlySteps;
+
+    // 曜日ごとの歩数データ（7日分）
+    private List<Integer> dailySteps;
+
     public User(String loginId, String email) {
         this.loginId = loginId;
         this.email = email;
+
+        // 一時間ごとのデータ初期化
+        hourlySteps = new ArrayList<>();
+        for (int i = 0; i < 24; i++) {
+            hourlySteps.add(0);
+        }
+
+        // 曜日ごとのデータ初期化
+        dailySteps = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            dailySteps.add(0);
+        }
     }
 
-    // 必要なgetter/setterのみ残す
+    // ゲッターとセッター
     public int getLoginStreak() {
         return loginStreak;
     }
@@ -44,5 +65,27 @@ public class User {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    // 一時間ごとの歩数データの取得と設定
+    public List<Integer> getHourlySteps() {
+        return hourlySteps;
+    }
+
+    public void setHourlySteps(int hour, int steps) {
+        if (hour >= 0 && hour < 24) {
+            hourlySteps.set(hour, steps);
+        }
+    }
+
+    // 曜日ごとの歩数データの取得と設定
+    public List<Integer> getDailySteps() {
+        return dailySteps;
+    }
+
+    public void setDailySteps(int day, int steps) {
+        if (day >= 0 && day < 7) {
+            dailySteps.set(day, steps);
+        }
     }
 }

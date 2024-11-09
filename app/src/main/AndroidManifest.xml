@@ -21,6 +21,9 @@
         <activity android:name=".RegisterActivity"
             android:exported="false"/>
         <activity android:name=".HomeActivity" />
+        <meta-data
+            android:name="com.android.systemui.whitelist"
+            android:resource="@xml/activity_trigger_whitelist" />
     </application>
 
 </manifest>
