@@ -80,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     lastLoginCalendar.setTimeInMillis(lastLoginDate);
                                                     int lastLoginDay = lastLoginCalendar.get(Calendar.DAY_OF_YEAR);
 
+                                                    // もし現在の日と前回ログインの日が異なる場合のみtotalLoginDaysを増加
                                                     if (currentDay != lastLoginDay) {
                                                         totalLoginDays++;
                                                     }
@@ -88,14 +89,27 @@ public class LoginActivity extends AppCompatActivity {
                                                     totalLoginDays = 1;
                                                 }
 
+                                                // ポイントの加算処理
+                                                int addedPoints = 1; // 初期値は1ポイント
+                                                if (loginStreak % 5 == 0) {
+                                                    addedPoints = 2; // 連続ログインが5の倍数の場合は2ポイント
+                                                }
+                                                if (totalLoginDays % 5 == 0) {
+                                                    addedPoints += 5; // 総ログイン日数が5の倍数の場合は5ポイント
+                                                }
+
+                                                points += addedPoints; // ポイントを加算
+
+                                                final int updatedLoginStreak = loginStreak;
                                                 final int updatedTotalLoginDays = totalLoginDays;
+                                                final int updatedPoints = points; // ポイントもfinalとして渡す
 
                                                 // Firestoreにユーザー情報を更新
                                                 db.collection("users").document(userId)
-                                                        .update("totalLoginDays", updatedTotalLoginDays, "lastLoginDate", currentDate)
+                                                        .update("loginStreak", updatedLoginStreak, "totalLoginDays", updatedTotalLoginDays, "lastLoginDate", currentDate, "points", updatedPoints)
                                                         .addOnSuccessListener(aVoid -> {
-                                                            // メッセージ表示
-                                                            showLoginBonus(loginStreak, updatedTotalLoginDays, points);
+                                                            // ポイント加算メッセージ
+                                                            showLoginBonus(updatedLoginStreak, updatedTotalLoginDays, updatedPoints);
 
                                                             // ホーム画面へ遷移
                                                             Intent intent = new Intent(LoginActivity.this, TabActivity.class);

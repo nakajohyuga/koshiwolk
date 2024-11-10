@@ -40,10 +40,11 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".StepCounterService"
+        <service android:name=".StepCounterService" android:enabled="true" android:exported="false" />
+
+        <receiver android:name=".StepDataUpdateReceiver"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
     </application>
 </manifest>

@@ -9,6 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import android.util.Log;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -56,6 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null && user.getUid() != null) {
                                 saveUserToFirestore(user.getUid(), loginId, email);
+                                initializeStepData(user.getUid());  // 初期歩数データの保存
                             }
                         } else {
                             Toast.makeText(RegisterActivity.this, "登録失敗: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -73,5 +79,29 @@ public class RegisterActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(RegisterActivity.this, "ユーザー情報の保存に失敗しました: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // 初期の歩数データをFirestoreに保存
+    private void initializeStepData(String userId) {
+        List<Integer> hourlySteps = new ArrayList<>(24);
+        List<Integer> dailySteps = new ArrayList<>(7);
+
+        // 初期化（0で埋める）
+        for (int i = 0; i < 24; i++) hourlySteps.add(0);
+        for (int i = 0; i < 7; i++) dailySteps.add(0);
+
+        Map<String, Object> stepData = new HashMap<>();
+        stepData.put("hourlySteps", hourlySteps);
+        stepData.put("dailySteps", dailySteps);
+        stepData.put("timestamp", System.currentTimeMillis());  // 現在の時刻を保存
+
+        // Firestoreに初期データを保存
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(userId)
+                .collection("stepsData")
+                .document("steps")
+                .set(stepData)
+                .addOnSuccessListener(aVoid -> Log.d("RegisterActivity", "Initial step data successfully written!"))
+                .addOnFailureListener(e -> Log.e("RegisterActivity", "Error writing initial step data", e));
     }
 }
