@@ -1,5 +1,6 @@
 package com.example.koshiwolk;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -20,6 +21,7 @@ public class StepCounterService extends Service {
     private static final String CHANNEL_ID = "StepCounterChannel";
     private static final String WORK_TAG = "StepDataWorker";
 
+    @SuppressLint("ForegroundServiceType")
     @Override
     public void onCreate() {
         super.onCreate();
