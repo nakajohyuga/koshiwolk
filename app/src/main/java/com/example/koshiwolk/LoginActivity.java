@@ -100,6 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                                                             // ホーム画面へ遷移
                                                             Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                                                             startActivity(intent);
+                                                            Intent serviceIntent = new Intent(this, StepCounterService.class);
+                                                            startService(serviceIntent);
                                                             finish();
                                                         })
                                                         .addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "データの更新に失敗しました: " + e.getMessage(), Toast.LENGTH_SHORT).show());

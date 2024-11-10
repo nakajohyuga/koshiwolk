@@ -35,6 +35,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.2")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation ("androidx.work:work-runtime:2.8.1")
 
     // Firebaseの依存関係
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))

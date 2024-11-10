@@ -21,17 +21,17 @@ public class User {
         this.loginId = loginId;
         this.email = email;
 
-        // 一時間ごとのデータ初期化
-        hourlySteps = new ArrayList<>();
-        for (int i = 0; i < 24; i++) {
-            hourlySteps.add(0);
-        }
-
-        // 曜日ごとのデータ初期化
-        dailySteps = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            dailySteps.add(0);
-        }
+//        // 一時間ごとのデータ初期化
+//        hourlySteps = new ArrayList<>();
+//        for (int i = 0; i < 24; i++) {
+//            hourlySteps.add(0);
+//        }
+//
+//        // 曜日ごとのデータ初期化
+//        dailySteps = new ArrayList<>();
+//        for (int i = 0; i < 7; i++) {
+//            dailySteps.add(0);
+//        }
     }
 
     // ゲッターとセッター
@@ -67,25 +67,25 @@ public class User {
         this.points = points;
     }
 
-    // 一時間ごとの歩数データの取得と設定
-    public List<Integer> getHourlySteps() {
-        return hourlySteps;
-    }
-
-    public void setHourlySteps(int hour, int steps) {
-        if (hour >= 0 && hour < 24) {
-            hourlySteps.set(hour, steps);
-        }
-    }
-
-    // 曜日ごとの歩数データの取得と設定
-    public List<Integer> getDailySteps() {
-        return dailySteps;
-    }
-
-    public void setDailySteps(int day, int steps) {
-        if (day >= 0 && day < 7) {
-            dailySteps.set(day, steps);
-        }
-    }
+//    // 一時間ごとの歩数データの取得と設定
+//    public List<Integer> getHourlySteps() {
+//        return hourlySteps;
+//    }
+//
+//    public void setHourlySteps(int hour, int steps) {
+//        if (hour >= 0 && hour < 24) {
+//            hourlySteps.set(hour, steps);
+//        }
+//    }
+//
+//    // 曜日ごとの歩数データの取得と設定
+//    public List<Integer> getDailySteps() {
+//        return dailySteps;
+//    }
+//
+//    public void setDailySteps(int day, int steps) {
+//        if (day >= 0 && day < 7) {
+//            dailySteps.set(day, steps);
+//        }
+//    }
 }

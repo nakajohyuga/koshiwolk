@@ -62,6 +62,8 @@ public class StepsFragment extends Fragment {
         List<BarEntry> entries = new ArrayList<>();
 
         firestore.collection("users").document(userId)
+                .collection("stepsData")  // "stepsData" コレクションにアクセス
+                .document("steps")       // "steps" ドキュメントを取得
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -85,4 +87,5 @@ public class StepsFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> Log.e("StepsFragment", "データの取得に失敗しました", e));
     }
+
 }
