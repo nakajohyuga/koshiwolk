@@ -1,6 +1,5 @@
 package com.example.koshiwolk;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ public class StepsFragment extends Fragment {
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
     private boolean isDailyMode = true;
+    private final String[] daysOfWeek = {"日", "月", "火", "水", "木", "金", "土"};
 
     @Nullable
     @Override
@@ -49,16 +50,10 @@ public class StepsFragment extends Fragment {
             loadStepData();
         });
 
-        // 更新ボタンをセットアップ
         Button refreshButton = view.findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(v -> {
-            // StepDataWorkerを一度だけ実行するリクエストを作成
             OneTimeWorkRequest stepDataUpdateRequest = new OneTimeWorkRequest.Builder(StepDataWorker.class).build();
-
-            // WorkManagerでリクエストをキューに追加
             WorkManager.getInstance(requireContext()).enqueue(stepDataUpdateRequest);
-
-            // Firestoreデータを再読み込みしてグラフを更新
             loadStepData();
         });
 
@@ -68,6 +63,7 @@ public class StepsFragment extends Fragment {
     private void setupBarChart() {
         barChart.getDescription().setEnabled(false);
         barChart.getAxisRight().setEnabled(false);
+
         XAxis xAxis = barChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
@@ -95,6 +91,15 @@ public class StepsFragment extends Fragment {
                             BarData barData = new BarData(dataSet);
                             barData.setBarWidth(0.9f);
                             barChart.setData(barData);
+
+                            // X軸のラベルをモードに応じて切り替え
+                            XAxis xAxis = barChart.getXAxis();
+                            if (isDailyMode) {
+                                xAxis.setValueFormatter(new IndexAxisValueFormatter(daysOfWeek));
+                            } else {
+                                xAxis.setValueFormatter(null); // 時間別の場合はデフォルトのインデックス表示
+                            }
+
                             barChart.invalidate();
                         } else {
                             Log.d("StepsFragment", "データが存在しません");
@@ -103,5 +108,4 @@ public class StepsFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> Log.e("StepsFragment", "データの取得に失敗しました", e));
     }
-
 }

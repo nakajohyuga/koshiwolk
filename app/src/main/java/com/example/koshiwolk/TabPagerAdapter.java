@@ -16,11 +16,11 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new DashboardFragment();
             case 1:
-                return new ProfileFragment();
-            case 2:
-                return new SettingsFragment();
-            case 3:
                 return new StepsFragment();
+            case 2:
+                return new ProfileFragment();
+//            case 3:
+//                return new SettingsFragment();
             default:
                 return null;
         }
@@ -28,7 +28,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;  // 4つのタブ
+        return 3;  // 4つのタブ
     }
 
     @Override
@@ -37,11 +37,11 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return "ダッシュボード";
             case 1:
-                return "プロフィール";
-            case 2:
-                return "設定";
-            case 3:
                 return "歩数";
+            case 2:
+                return "プロフィール";
+//            case 3:
+//                return "設定";
             default:
                 return null;
         }

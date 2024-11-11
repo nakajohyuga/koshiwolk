@@ -1,15 +1,16 @@
 package com.example.koshiwolk;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileFragment extends Fragment {
@@ -18,6 +19,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore firestore;
 
     private TextView loginIdTextView, emailTextView, loginStreakTextView, totalLoginDaysTextView, lastLoginDateTextView, pointsTextView;
+    private Button logoutButton;
 
     @Nullable
     @Override
@@ -31,12 +33,24 @@ public class ProfileFragment extends Fragment {
         totalLoginDaysTextView = view.findViewById(R.id.totalLoginDaysTextView);
         pointsTextView = view.findViewById(R.id.pointsTextView);
 
+        // ログアウトボタンの関連付け
+        logoutButton = view.findViewById(R.id.logoutButton);
+
         // Firebaseの初期化
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
         // Firebaseからデータを取得して表示
         loadUserData();
+
+        // ログアウトボタンのクリックリスナー設定
+        logoutButton.setOnClickListener(v -> {
+            auth.signOut();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            getActivity().finish();
+        });
 
         return view;
     }

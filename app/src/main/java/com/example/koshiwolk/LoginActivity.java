@@ -64,69 +64,54 @@ public class LoginActivity extends AppCompatActivity {
                                         if (task1.isSuccessful()) {
                                             DocumentSnapshot document = task1.getResult();
                                             if (document.exists()) {
-                                                // ユーザー情報の取得とnullチェック
-                                                Long lastLoginDate = document.getLong("lastLoginDate");
-                                                Integer loginStreak = document.getLong("loginStreak") != null ? document.getLong("loginStreak").intValue() : 0;
-                                                Integer totalLoginDays = document.getLong("totalLoginDays") != null ? document.getLong("totalLoginDays").intValue() : 0;
-                                                Integer points = document.getLong("points") != null ? document.getLong("points").intValue() : 100;
+                                                long[] lastLoginDate = {document.getLong("lastLoginDate") != null ? document.getLong("lastLoginDate") : 0L};
+                                                int[] loginStreak = {document.getLong("loginStreak") != null ? document.getLong("loginStreak").intValue() : 0};
+                                                int[] totalLoginDays = {document.getLong("totalLoginDays") != null ? document.getLong("totalLoginDays").intValue() : 0};
+                                                int[] points = {document.getLong("points") != null ? document.getLong("points").intValue() : 100};
 
                                                 long currentDate = System.currentTimeMillis();
                                                 Calendar calendar = Calendar.getInstance();
                                                 calendar.setTimeInMillis(currentDate);
                                                 int currentDay = calendar.get(Calendar.DAY_OF_YEAR);
 
-                                                if (lastLoginDate != null && lastLoginDate != 0) {
+                                                boolean isNewDay = lastLoginDate[0] == 0 || !isSameDay(currentDate, lastLoginDate[0]);
+
+                                                if (isNewDay) {
                                                     Calendar lastLoginCalendar = Calendar.getInstance();
-                                                    lastLoginCalendar.setTimeInMillis(lastLoginDate);
+                                                    lastLoginCalendar.setTimeInMillis(lastLoginDate[0]);
                                                     int lastLoginDay = lastLoginCalendar.get(Calendar.DAY_OF_YEAR);
 
                                                     // 連続ログイン判定
                                                     if (currentDay == lastLoginDay + 1) {
-                                                        loginStreak++;
-                                                    } else if (currentDay != lastLoginDay) {
-                                                        loginStreak = 1;
+                                                        loginStreak[0]++;
+                                                    } else {
+                                                        loginStreak[0] = 1;
                                                     }
 
-                                                    // 前回と日が異なる場合のみ総ログイン日数を増加
-                                                    if (currentDay != lastLoginDay) {
-                                                        totalLoginDays++;
+                                                    totalLoginDays[0]++;
+
+                                                    // ポイント加算
+                                                    int addedPoints = 1;
+                                                    if (loginStreak[0] % 5 == 0) {
+                                                        addedPoints = 2;
                                                     }
+                                                    if (totalLoginDays[0] % 5 == 0) {
+                                                        addedPoints += 5;
+                                                    }
+                                                    points[0] += addedPoints;
+
+                                                    // Firestoreに更新
+                                                    db.collection("users").document(userId)
+                                                            .update("loginStreak", loginStreak[0], "totalLoginDays", totalLoginDays[0], "lastLoginDate", currentDate, "points", points[0])
+                                                            .addOnSuccessListener(aVoid -> {
+                                                                showLoginBonus(loginStreak[0], totalLoginDays[0], points[0]);
+                                                                navigateToHomeScreen();
+                                                            })
+                                                            .addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "データの更新に失敗しました: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                                                 } else {
-                                                    // 初回ログイン時は初期化
-                                                    loginStreak = 1;
-                                                    totalLoginDays = 1;
+                                                    // 同日の場合はポイント加算なしでホーム画面へ
+                                                    navigateToHomeScreen();
                                                 }
-
-                                                // ポイントの加算処理
-                                                int addedPoints = 1; // 初期値は1ポイント
-                                                if (loginStreak % 5 == 0) {
-                                                    addedPoints = 2; // 連続ログインが5の倍数の場合は2ポイント
-                                                }
-                                                if (totalLoginDays % 5 == 0) {
-                                                    addedPoints += 5; // 総ログイン日数が5の倍数の場合は5ポイント
-                                                }
-
-                                                points += addedPoints; // ポイントを加算
-
-                                                final int updatedLoginStreak = loginStreak;
-                                                final int updatedTotalLoginDays = totalLoginDays;
-                                                final int updatedPoints = points;
-
-                                                // Firestoreにユーザー情報を更新
-                                                db.collection("users").document(userId)
-                                                        .update("loginStreak", updatedLoginStreak, "totalLoginDays", updatedTotalLoginDays, "lastLoginDate", currentDate, "points", updatedPoints)
-                                                        .addOnSuccessListener(aVoid -> {
-                                                            // ポイント加算メッセージ
-                                                            showLoginBonus(updatedLoginStreak, updatedTotalLoginDays, updatedPoints);
-
-                                                            // ホーム画面へ遷移
-                                                            Intent intent = new Intent(LoginActivity.this, TabActivity.class);
-                                                            startActivity(intent);
-                                                            Intent serviceIntent = new Intent(this, StepCounterService.class);
-                                                            startService(serviceIntent);
-                                                            finish();
-                                                        })
-                                                        .addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "データの更新に失敗しました: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                                             } else {
                                                 Toast.makeText(LoginActivity.this, "ユーザー情報が見つかりません", Toast.LENGTH_SHORT).show();
                                             }
@@ -139,6 +124,26 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "ログイン失敗: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    // 日付比較のためのメソッド
+    private boolean isSameDay(long timestamp1, long timestamp2) {
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTimeInMillis(timestamp1);
+
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTimeInMillis(timestamp2);
+
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private void navigateToHomeScreen() {
+        Intent intent = new Intent(LoginActivity.this, TabActivity.class);
+        startActivity(intent);
+        Intent serviceIntent = new Intent(this, StepCounterService.class);
+        startService(serviceIntent);
+        finish();
     }
 
     // ログインボーナスの表示

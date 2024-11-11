@@ -18,8 +18,8 @@ public class StepDataWorker extends Worker {
     private static final String TAG = "StepDataWorker";
     private static final String PREFS_NAME = "StepCounterPrefs";
     private static final String PREF_TOTAL_STEPS = "totalStepCount";
-    private static final String PREF_LAST_TIMESTAMP = "lastTimestamp";  // 最後に保存した日時を保持
-    private static final String PREF_LAST_SAVED_STEPS = "lastSavedSteps"; // 前回保存した総歩数
+    private static final String PREF_LAST_TIMESTAMP = "lastTimestamp";
+    private static final String PREF_LAST_SAVED_STEPS = "lastSavedSteps";
 
     public StepDataWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
@@ -57,86 +57,76 @@ public class StepDataWorker extends Worker {
                 .document("steps")
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+                    List<Integer> hourlySteps;
+                    List<Integer> dailySteps;
+
                     if (documentSnapshot.exists()) {
                         List<Long> hourlyStepsLong = (List<Long>) documentSnapshot.get("hourlySteps");
                         List<Long> dailyStepsLong = (List<Long>) documentSnapshot.get("dailySteps");
 
-                        List<Integer> hourlySteps = new ArrayList<>();
-                        for (Long step : hourlyStepsLong) {
-                            hourlySteps.add(Math.toIntExact(step));
-                        }
+                        hourlySteps = new ArrayList<>();
+                        for (Long step : hourlyStepsLong) hourlySteps.add(Math.toIntExact(step));
 
-                        List<Integer> dailySteps = new ArrayList<>();
-                        for (Long step : dailyStepsLong) {
-                            dailySteps.add(Math.toIntExact(step));
-                        }
-
-                        Calendar calendar = Calendar.getInstance();
-                        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-                        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-
-                        Calendar lastSavedCalendar = Calendar.getInstance();
-                        lastSavedCalendar.setTimeInMillis(lastTimestamp);
-                        int lastHourOfDay = lastSavedCalendar.get(Calendar.HOUR_OF_DAY);
-
-                        if (hourOfDay != lastHourOfDay) {
-                            hourlySteps.set(lastHourOfDay, hourlySteps.get(lastHourOfDay) + newSteps);
-                        } else {
-                            hourlySteps.set(hourOfDay, hourlySteps.get(hourOfDay) + newSteps);
-                        }
-
-                        dailySteps.set(dayOfWeek - 1, dailySteps.get(dayOfWeek - 1) + newSteps);
-
-                        Map<String, Object> stepData = new HashMap<>();
-                        stepData.put("hourlySteps", hourlySteps);
-                        stepData.put("dailySteps", dailySteps);
-                        stepData.put("timestamp", currentTimestamp);
-
-                        db.collection("users").document(userId)
-                                .collection("stepsData")
-                                .document("steps")
-                                .set(stepData)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Data successfully written!"))
-                                .addOnFailureListener(e -> Log.e(TAG, "Error writing data", e));
-
-                        if (isNewDayOrWeek(calendar)) {
-                            for (int i = 0; i < 24; i++) hourlySteps.set(i, 0);
-                            for (int i = 0; i < 7; i++) dailySteps.set(i, 0);
-                        }
-
+                        dailySteps = new ArrayList<>();
+                        for (Long step : dailyStepsLong) dailySteps.add(Math.toIntExact(step));
                     } else {
-                        initializeStepData(userId, totalSteps, currentTimestamp);
+                        hourlySteps = initializeHourlySteps();
+                        dailySteps = initializeDailySteps();
                     }
+
+                    Calendar calendar = Calendar.getInstance();
+                    int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+                    if (isNewDayOrWeek(calendar)) {
+                        resetSteps(hourlySteps, dailySteps);  // リセット処理
+                    }
+
+                    hourlySteps.set(hourOfDay, hourlySteps.get(hourOfDay) + newSteps);
+                    dailySteps.set(dayOfWeek - 1, dailySteps.get(dayOfWeek - 1) + newSteps);
+
+                    Map<String, Object> stepData = new HashMap<>();
+                    stepData.put("hourlySteps", hourlySteps);
+                    stepData.put("dailySteps", dailySteps);
+                    stepData.put("timestamp", currentTimestamp);
+
+                    db.collection("users").document(userId)
+                            .collection("stepsData")
+                            .document("steps")
+                            .set(stepData)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Data successfully written!"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Error writing data", e));
+
+                    updateSharedPreferences(currentTimestamp, totalSteps, sharedPreferences);
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error retrieving step data", e));
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong(PREF_LAST_TIMESTAMP, currentTimestamp);
-        editor.putInt(PREF_LAST_SAVED_STEPS, totalSteps);
-        editor.apply();
 
         return Result.success();
     }
 
-    private void initializeStepData(String userId, int totalSteps, long timestamp) {
+    private List<Integer> initializeHourlySteps() {
         List<Integer> hourlySteps = new ArrayList<>(24);
-        List<Integer> dailySteps = new ArrayList<>(7);
-
         for (int i = 0; i < 24; i++) hourlySteps.add(0);
+        return hourlySteps;
+    }
+
+    private List<Integer> initializeDailySteps() {
+        List<Integer> dailySteps = new ArrayList<>(7);
         for (int i = 0; i < 7; i++) dailySteps.add(0);
+        return dailySteps;
+    }
 
-        Map<String, Object> stepData = new HashMap<>();
-        stepData.put("hourlySteps", hourlySteps);
-        stepData.put("dailySteps", dailySteps);
-        stepData.put("timestamp", timestamp);
+    private void resetSteps(List<Integer> hourlySteps, List<Integer> dailySteps) {
+        for (int i = 0; i < 24; i++) hourlySteps.set(i, 0);
+        for (int i = 0; i < 7; i++) dailySteps.set(i, 0);
+        Log.d(TAG, "Steps have been reset for a new day or week.");
+    }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").document(userId)
-                .collection("stepsData")
-                .document("steps")
-                .set(stepData)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Initial data successfully written!"))
-                .addOnFailureListener(e -> Log.e(TAG, "Error writing initial data", e));
+    private void updateSharedPreferences(long currentTimestamp, int totalSteps, SharedPreferences sharedPreferences) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(PREF_LAST_TIMESTAMP, currentTimestamp);
+        editor.putInt(PREF_LAST_SAVED_STEPS, totalSteps);
+        editor.apply();
     }
 
     private boolean isNewDayOrWeek(Calendar calendar) {

@@ -41,4 +41,14 @@
         android:text="現在のポイント: "
         android:textSize="18sp" />
 
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/blue"
+        android:textColor="@android:color/white"
+        android:text="ログアウト"
+        android:layout_marginTop="16dp" />
+
+
 </LinearLayout>
