@@ -1,5 +1,6 @@
 package com.example.koshiwolk;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -46,6 +49,19 @@ public class StepsFragment extends Fragment {
             loadStepData();
         });
 
+        // 更新ボタンをセットアップ
+        Button refreshButton = view.findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(v -> {
+            // StepDataWorkerを一度だけ実行するリクエストを作成
+            OneTimeWorkRequest stepDataUpdateRequest = new OneTimeWorkRequest.Builder(StepDataWorker.class).build();
+
+            // WorkManagerでリクエストをキューに追加
+            WorkManager.getInstance(requireContext()).enqueue(stepDataUpdateRequest);
+
+            // Firestoreデータを再読み込みしてグラフを更新
+            loadStepData();
+        });
+
         return view;
     }
 
@@ -62,8 +78,8 @@ public class StepsFragment extends Fragment {
         List<BarEntry> entries = new ArrayList<>();
 
         firestore.collection("users").document(userId)
-                .collection("stepsData")  // "stepsData" コレクションにアクセス
-                .document("steps")       // "steps" ドキュメントを取得
+                .collection("stepsData")
+                .document("steps")
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {

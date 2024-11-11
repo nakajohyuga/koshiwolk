@@ -5,12 +5,27 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- モード切り替えボタン -->
-    <Button
-        android:id="@+id/toggleButton"
+    <!-- ボタンを横に並べるためのコンテナ -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="表示モード切替" />
+        android:orientation="horizontal">
+
+        <!-- 表示モード切替ボタン -->
+        <Button
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="表示モード切替" />
+
+        <!-- リフレッシュボタン -->
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="データ更新" />
+    </LinearLayout>
 
     <!-- グラフ -->
     <com.github.mikephil.charting.charts.BarChart
@@ -21,4 +36,5 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp" />
     <!-- タブバーの高さ分のマージンを下部に追加 -->
+
 </LinearLayout>

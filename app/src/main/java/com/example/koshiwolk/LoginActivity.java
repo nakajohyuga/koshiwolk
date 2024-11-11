@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                                             if (document.exists()) {
                                                 // ユーザー情報の取得とnullチェック
                                                 Long lastLoginDate = document.getLong("lastLoginDate");
-                                                Integer loginStreak = document.getLong("loginStreak") != null ? document.getLong("loginStreak").intValue() : 1;
+                                                Integer loginStreak = document.getLong("loginStreak") != null ? document.getLong("loginStreak").intValue() : 0;
                                                 Integer totalLoginDays = document.getLong("totalLoginDays") != null ? document.getLong("totalLoginDays").intValue() : 0;
                                                 Integer points = document.getLong("points") != null ? document.getLong("points").intValue() : 100;
 
@@ -80,12 +80,20 @@ public class LoginActivity extends AppCompatActivity {
                                                     lastLoginCalendar.setTimeInMillis(lastLoginDate);
                                                     int lastLoginDay = lastLoginCalendar.get(Calendar.DAY_OF_YEAR);
 
-                                                    // もし現在の日と前回ログインの日が異なる場合のみtotalLoginDaysを増加
+                                                    // 連続ログイン判定
+                                                    if (currentDay == lastLoginDay + 1) {
+                                                        loginStreak++;
+                                                    } else if (currentDay != lastLoginDay) {
+                                                        loginStreak = 1;
+                                                    }
+
+                                                    // 前回と日が異なる場合のみ総ログイン日数を増加
                                                     if (currentDay != lastLoginDay) {
                                                         totalLoginDays++;
                                                     }
                                                 } else {
-                                                    // 初回ログイン時はtotalLoginDaysを1に設定
+                                                    // 初回ログイン時は初期化
+                                                    loginStreak = 1;
                                                     totalLoginDays = 1;
                                                 }
 
@@ -102,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 final int updatedLoginStreak = loginStreak;
                                                 final int updatedTotalLoginDays = totalLoginDays;
-                                                final int updatedPoints = points; // ポイントもfinalとして渡す
+                                                final int updatedPoints = points;
 
                                                 // Firestoreにユーザー情報を更新
                                                 db.collection("users").document(userId)

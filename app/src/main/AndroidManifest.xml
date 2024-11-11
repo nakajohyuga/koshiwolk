@@ -46,5 +46,9 @@
             android:enabled="true"
             android:exported="false" />
 
+        <meta-data
+            android:name="android.activity_trigger_whitelist"
+            android:resource="@xml/activity_trigger_whitelist" />
+
     </application>
 </manifest>

@@ -2,4 +2,6 @@
 <activity-trigger-whitelist xmlns:android="http://schemas.android.com/apk/res/android">
     <activity
         android:name=".HomeActivity" />
+    <activity
+        android:name=".TabActivity" />
 </activity-trigger-whitelist>
